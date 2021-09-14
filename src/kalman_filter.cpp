@@ -55,6 +55,15 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
     VectorXd h = ConvertStateToPolar(x_);
   
     VectorXd y = z - h;
+    while (abs(y[1]) > M_PI){
+      if (y[1] < 0){
+        y[1] += 2*M_PI;
+      }
+      else
+      {
+        y[1]-=2*M_PI;
+      }
+    }
     MatrixXd Ht = H_.transpose();
     MatrixXd S = H_ * P_ * Ht + R_;
     MatrixXd Si = S.inverse();
@@ -79,15 +88,15 @@ VectorXd KalmanFilter::ConvertStateToPolar(const VectorXd& state) {
     }
        
     const float phi = atan2(py,px);
-    while (abs(phi) > M_PI){
-      if (phi < 0){
-        phi += 2*M_PI;
-      }
-      else
-      {
-        phi-=2*M_PI;
-      }
-    }
+//     while (abs(phi) > M_PI){
+//       if (phi < 0){
+//         phi += 2*M_PI;
+//       }
+//       else
+//       {
+//         phi-=2*M_PI;
+//       }
+//     }
   
     const float rho_dot = (px*vx + py*vy) / rho;
   
